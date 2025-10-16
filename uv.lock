@@ -330,8 +330,8 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "boto3", specifier = ">=1.40.46" },
-    { name = "litellm", specifier = ">=1.76,<2" },
+    { name = "boto3", specifier = "==1.40.49" },
+    { name = "litellm", specifier = "==1.77.7" },
     { name = "numpy", specifier = "==2.3.2" },
     { name = "openai", specifier = ">=1.97.1,<2" },
     { name = "pandas", specifier = "==2.3.1" },
