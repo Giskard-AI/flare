@@ -1,0 +1,132 @@
+{
+    "models": [
+        {
+            "name": "GPT 4o", 
+            "litellm_model": "openai/gpt-4o",
+            "parallelism": 8
+        },
+        {
+            "name": "GPT 4o mini", 
+            "litellm_model": "openai/gpt-4o-mini"
+        }
+    ],
+    "scorers": {
+        "biases\/story_generation" : {
+            "parallelism": 15,
+            "models": [
+                {
+                    "litellm_model": "openai/gpt-4o-mini",
+                    "weight": 1.0 
+                },
+                {
+                    "litellm_model": "openai/gpt-4o",
+                    "weight": 1.0 
+                }                
+            ]
+        },
+        "factuality" : {
+            "parallelism": 15,
+            "models": [
+                {
+                    "litellm_model": "openai/gpt-4o-mini",
+                    "weight": 1.0 
+                },
+                {
+                    "litellm_model": "openai/gpt-4o",
+                    "weight": 1.1
+                }                
+            ]
+        },
+        "debunking" : {
+            "parallelism": 15,
+            "models": [
+                {
+                    "litellm_model": "openai/gpt-4o-mini",
+                    "weight": 1.0
+                },
+                {
+                    "litellm_model": "openai/gpt-4o",
+                    "weight": 1.1
+                }
+            ]
+        },
+        "harmful_misguidance" : {
+            "parallelism": 15,
+            "models": [
+                {
+                    "litellm_model": "openai/gpt-4o-mini",
+                    "weight": 1.0
+                },
+                {
+                    "litellm_model": "openai/gpt-4o",
+                    "weight": 1.1
+                }
+            ]
+        },
+        "misinformation" : {
+            "parallelism": 15,
+            "models": [
+                {
+                    "litellm_model": "openai/gpt-4o-mini",
+                    "weight": 1.0
+                },
+                {
+                    "litellm_model": "openai/gpt-4o",
+                    "weight": 1.1
+                }
+            ]
+        },
+        "tools" : {
+            "parallelism": 15,
+            "models": [
+                {
+                    "litellm_model": "openai/gpt-4o-mini",
+                    "weight": 1.0
+                },
+                {
+                    "litellm_model": "openai/gpt-4o",
+                    "weight": 1.1
+                }
+            ]
+        },
+        "jailbreak/encoding" : {
+            "parallelism": 15,
+            "models": [
+                {
+                    "litellm_model": "openai/gpt-4o-mini",
+                    "weight": 1.0
+                },
+                {
+                    "litellm_model": "openai/gpt-4o",
+                    "weight": 1.1
+                }
+            ]
+        },
+        "jailbreak/injection" : {
+            "parallelism": 15,
+            "models": [
+                {
+                    "litellm_model": "openai/gpt-4o-mini",
+                    "weight": 1.0
+                },
+                {
+                    "litellm_model": "openai/gpt-4o",
+                    "weight": 1.1
+                }
+            ]
+        },
+        "jailbreak/framing" : {
+            "parallelism": 15,
+            "models": [
+                {
+                    "litellm_model": "openai/gpt-4o-mini",
+                    "weight": 1.0
+                },
+                {
+                    "litellm_model": "openai/gpt-4o",
+                    "weight": 1.1
+                }
+            ]
+        }
+    }
+}
