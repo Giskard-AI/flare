@@ -133,7 +133,7 @@ class ScorerOutput(FlareModel):
     details: dict[str, Any] = Field(
         default_factory=dict, description="optional details about the scoring process"
     )
-    cost: float = 0
+    cost: dict[str, float] = Field(default_factory=dict)
 
 # TODO: would be better to have subclass of scorer, with custom details as pydantic model
 
