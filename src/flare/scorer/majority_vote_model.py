@@ -30,6 +30,7 @@ class VoteException(Exception):
 class MajorityVote(FlareModel):
     decision: bool
     raw_responses: dict[str, dict]
+    cost: float = 0
 
 
 class MajorityVoteEvaluationModel(BaseModel):
@@ -56,6 +57,7 @@ class MajorityVoteEvaluationModel(BaseModel):
             ]
         )
 
+        evaluation_cost = 0
         for model, response in zip(self.models, responses):
             try:
                 response_json = extract_json_object(response.choices[0].message.content)
@@ -65,6 +67,10 @@ class MajorityVoteEvaluationModel(BaseModel):
                 }
                 if "reason" in response_json:
                     votes[model.litellm_model]["reason"] = response_json["reason"]
+                
+                response_cost = response.model_dump()["usage"].get("cost", response._hidden_params.get("response_cost", 0))
+                evaluation_cost += response_cost
+
             except Exception as e:
                 logging.error(
                     "Error in evaluation with model",
@@ -85,8 +91,8 @@ class MajorityVoteEvaluationModel(BaseModel):
 
         # Check for consensus
         if pass_weight_sum > total_weight / 2:
-            return MajorityVote(decision=True, raw_responses=votes)
+            return MajorityVote(decision=True, raw_responses=votes, cost=evaluation_cost)
         elif fail_weight_sum > total_weight / 2:
-            return MajorityVote(decision=False, raw_responses=votes)
+            return MajorityVote(decision=False, raw_responses=votes, cost=evaluation_cost)
         else:
             raise VoteException("No consensus reached")

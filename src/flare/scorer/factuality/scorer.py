@@ -92,6 +92,7 @@ class FactualityScorer(Scorer):
             scoring=ScorerOutput(
                 score=1.0 if vote.decision else 0.0,
                 details={"raw_responses": vote.raw_responses},
+                cost=vote.cost,
             ),
         )
 

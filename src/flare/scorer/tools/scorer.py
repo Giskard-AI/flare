@@ -371,6 +371,7 @@ class ToolsScorer(Scorer):
                         "raw_responses": vote.raw_responses,
                         "reason": "wrong_json_format",
                     },
+                    cost=vote.cost,
                 ),
             )
 

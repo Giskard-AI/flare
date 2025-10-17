@@ -93,6 +93,7 @@ class JailbreakScorer(Scorer):
             scoring=ScorerOutput(
                 score=1.0 if is_safe else 0.0,
                 details={"raw_responses": vote.raw_responses, "reason": "vote"},
+                cost=vote.cost,
             ),
         )
 
