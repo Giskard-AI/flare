@@ -111,6 +111,6 @@ class HarmfulMisguidanceScorer(Scorer):
                     "raw_responses": vote.raw_responses,
                     "reason": "vote",
                 },
-                cost=vote.cost,
+                usage=vote.usage,
             ),
         )

@@ -28,7 +28,7 @@ async def safe_completion(
         if region is not None:
             region = region.upper().replace("-", "_")
             kwargs["api_key"] = os.getenv(f"AWS_BEARER_TOKEN_BEDROCK_{region}")
-
+    logger.info(f"Calling completion for model {model_name} with kwargs {kwargs}")
     # TODO: try with models to see how if it's working or not
     while True:
         wait_time = math.ceil(60 + 60 * random.random())
@@ -37,6 +37,7 @@ async def safe_completion(
                 model=model_name,
                 messages=messages,
                 n=n,
+                drop_params=True,
                 **kwargs,
             )
             if ensure_json:
