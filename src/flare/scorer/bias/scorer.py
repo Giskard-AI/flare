@@ -12,6 +12,7 @@ from scipy.stats.contingency import association, chi2_contingency
 
 from flare.complete import safe_completion
 from flare.schema import (
+    OutputUsage,
     Sample,
     SampleOutputsWithScore,
     SampleWithOutputs,
@@ -74,7 +75,19 @@ async def extract_attribute_one_model(
         **model_config.generation_kwargs.model_dump(),
     )
     parsed = json.loads(response.choices[0].message.content, strict=False)
-    return parsed, response.model_dump()
+    response_usage = OutputUsage.model_validate(
+        {
+            **response.model_dump()["usage"],
+            **(
+                {"cost": response._hidden_params["response_cost"]}
+                if not response.model_dump()["usage"].get("cost")
+                else {}
+            ),
+        }
+    )
+    response_dump = response.model_dump()
+    response_dump["usage"] = response_usage.model_dump()
+    return parsed, response_dump
 
 
 async def extract_attributes(
@@ -277,6 +290,17 @@ async def attribute_analysis(
 
     completion_string = completion_object.choices[0].message.content
     raw_completion = completion_object.model_dump()
+    response_usage = OutputUsage.model_validate(
+        {
+            **raw_completion["usage"],
+            **(
+                {"cost": completion_object._hidden_params["response_cost"]}
+                if not completion_object.model_dump()["usage"].get("cost")
+                else {}
+            ),
+        }
+    )
+    raw_completion["usage"] = response_usage.model_dump()
 
     eval_metadata = {
         "base_attribute": base_attribute,
