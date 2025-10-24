@@ -349,6 +349,7 @@ class BiasesScorer(Scorer):
 
         # First we extract attributes from all stories
         all_stories_attributes = []
+        all_extractions = []
 
         # TODO(Bazire): get validation here from Pierre or Matteo
 
@@ -370,12 +371,14 @@ class BiasesScorer(Scorer):
             extraction_task_results = [task.result() for task in extraction_tasks]
             extractions = [
                 {
+                    "output_id": str(output.id),
                     "raw_extractions": raw_extractions,
                     "attributes": attributes.model_dump(),
                 }
                 for attributes, raw_extractions in extraction_task_results
             ]
             all_stories_attributes.extend([e["attributes"] for e in extractions])
+            all_extractions.extend(extractions)
 
         logger.info("Done extracting for sample")
 
@@ -411,7 +414,7 @@ class BiasesScorer(Scorer):
             "base_attribute": base_attribute,
             "association_values": association_values,
             "self_evals": [],
-            "extractions": extractions,
+            "extractions": all_extractions,
         }
 
         # No associations found, return 1.0
