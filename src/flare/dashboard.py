@@ -45,7 +45,7 @@ def setup_stats(layout) -> tuple[dict[str, Any], dict[str, Any]]:
     )
     for name in STATS["models"].keys():
         # Truncate model names to 30 characters for display
-        display_name =  "..." + name[-100:] if len(name) > 100 else name
+        display_name =  "..." + name[-50:] if len(name) > 50 else name
         _task_mapping["models"][name] = generation_progress.add_task(
             display_name, total=STATS["nb_samples"]
         )
