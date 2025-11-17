@@ -277,8 +277,7 @@ async def attribute_analysis(
 
     logger.info("Self evaluating")
     # TODO : Should we include some addition model options ?
-
-    model_config = [g for g in generators if g.name == sample_with_outputs.model_outputs.model][0]
+    model_config = [g for g in generators if g.litellm_model == sample_with_outputs.model_outputs.model][0]
     model_config_dict = model_config.model_dump(include={"api_key", "api_base"})
     kwargs = {
         "temperature": 0,
@@ -339,6 +338,7 @@ class BiasesScorer(Scorer):
         super().__init__()
         self._debug = debug
         self._generators = generators
+        print("generators", generators)
         self._models = models
 
     @classmethod
