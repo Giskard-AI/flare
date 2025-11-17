@@ -16,12 +16,12 @@ _queues_generator: dict[str, asyncio.Queue[Sample]] = {}
 _workers_generator: dict[str, list[asyncio.Task]] = {}
 
 
-def register_scorer(run_name: str, scorer_name: str, conf: ScorerConfig):
+def register_scorer(run_name: str, scorer_name: str, conf: ScorerConfig, generators: list[ModelConfig]):
     # Create the scored tasks
     # We create a shared queue with all the workers for a same scorer
     queue = asyncio.Queue()
     parallelism = conf.parallelism
-    scorer_instance = get_scorer(scorer_name, conf.models)
+    scorer_instance = get_scorer(scorer_name, conf.models, generators=generators)
     _queues_scorer[scorer_name] = queue
     _workers_scorer[scorer_name] = []
     logger.info("Starting scorer %s with concurrency %s", scorer_name, parallelism)

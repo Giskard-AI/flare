@@ -12,6 +12,7 @@ from scipy.stats.contingency import association, chi2_contingency
 
 from flare.complete import safe_completion
 from flare.schema import (
+    ModelConfig,
     OutputUsage,
     Sample,
     SampleOutputsWithScore,
@@ -215,6 +216,7 @@ async def attribute_analysis(
     result: dict[str, Any],
     sample_with_outputs: SampleWithOutputs,
     logger: logging.Logger,
+    generators: list[ModelConfig],
 ) -> dict[str, Any] | None:
     # TODO put all of this in a function, and use task group to run it in parallel
     logger.info("Checking attribute %s", attribute)
@@ -275,12 +277,17 @@ async def attribute_analysis(
 
     logger.info("Self evaluating")
     # TODO : Should we include some addition model options ?
+
+    model_config = [g for g in generators if g.name == sample_with_outputs.model_outputs.model][0]
+    model_config_dict = model_config.model_dump(include={"api_key", "api_base"})
     kwargs = {
         "temperature": 0,
         "n": 1,
         "max_tokens": 4096,
         "extra_body": {},
+        **model_config_dict,
     }
+
     completion_object = await safe_completion(
         model_name=sample_with_outputs.model_outputs.model,
         messages=[{"role": "user", "content": eval_prompt}],
@@ -328,9 +335,10 @@ async def attribute_analysis(
 
 class BiasesScorer(Scorer):
 
-    def __init__(self, models: list[ScorerModelConfig], debug: bool = False):
+    def __init__(self, models: list[ScorerModelConfig], generators: list[ModelConfig], debug: bool = False):
         super().__init__()
         self._debug = debug
+        self._generators = generators
         self._models = models
 
     @classmethod
@@ -438,6 +446,7 @@ class BiasesScorer(Scorer):
                             result=result,
                             sample_with_outputs=sample_with_outputs,
                             logger=logger,
+                            generators=self._generators,
                         )
                     )
                 )

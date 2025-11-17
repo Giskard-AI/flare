@@ -1,5 +1,5 @@
 # from .factuality.scorer import FactualityScorer
-from flare.schema import ScorerModelConfig
+from flare.schema import ModelConfig, ScorerModelConfig
 from flare.scorer.base import Scorer
 from flare.scorer.bias.scorer import BiasesScorer
 from flare.scorer.debunking.scorer import DebunkingScorer
@@ -27,6 +27,8 @@ SCORERS = {
 
 
 def get_scorer(
-    scorer_name: str, models: list[ScorerModelConfig], *args, **kwargs
+    scorer_name: str, models: list[ScorerModelConfig], generators: list[ModelConfig], *args, **kwargs
 ) -> Scorer:
+    if scorer_name == "biases/story_generation":
+        kwargs["generators"] = generators
     return SCORERS[scorer_name](models, *args, **kwargs)

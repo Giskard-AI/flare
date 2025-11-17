@@ -83,7 +83,7 @@ async def main(
 
     # Create the scorer tasks
     for scorer_name, conf in config_scorer.items():
-        register_scorer(run_path, scorer_name, conf)
+        register_scorer(run_path, scorer_name, conf, config)
 
     # Create all the workers according to the config
     for elt in config:
