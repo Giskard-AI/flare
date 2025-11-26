@@ -278,12 +278,11 @@ async def attribute_analysis(
     logger.info("Self evaluating")
     # TODO : Should we include some addition model options ?
     model_config = [g for g in generators if g.litellm_model == sample_with_outputs.model_outputs.model][0]
-    model_config_dict = model_config.model_dump(include={"api_key", "api_base"})
+    model_config_dict = model_config.model_dump(include={"api_key", "api_base", "region"})
     kwargs = {
         "temperature": 0,
         "n": 1,
         "max_tokens": 4096,
-        "extra_body": {},
         **model_config_dict,
     }
 
