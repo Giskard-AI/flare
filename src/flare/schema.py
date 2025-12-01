@@ -18,7 +18,7 @@ class GenerationParams(FlareModel):
     temperature: float = Field(0.0, ge=0.0)
     tools: Any | None = Field(None)
     max_tokens: int = Field(4096)
-    extra_body: Optional[dict[str, Any]] = Field(default_factory=dict)
+    extra_body: Optional[dict[str, Any]] = None
 
 
 # TODO : improve tool handling when needed
