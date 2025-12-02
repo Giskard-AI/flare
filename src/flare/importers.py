@@ -84,7 +84,7 @@ def phare_tools_to_sample(sample_json: dict) -> Sample:
                 "id": uuid.uuid4(),
                 "type": "chat_completion",
                 "messages": sample_json["messages"],
-                "params": {"tools": sample_json["tools"], "max_tokens": 1024},
+                "params": {"tools": sample_json["tools"], "max_tokens": 4096},
             }
         ],
         metadata=metadata,
