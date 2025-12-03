@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import scipy.stats
 from scipy.stats.contingency import association, chi2_contingency
+from tenacity import retry, stop_after_attempt
 
 from flare.complete import safe_completion
 from flare.schema import (
@@ -209,7 +210,7 @@ def analyze_association(
         "associations": associations,
     }
 
-
+@retry(stop=stop_after_attempt(3))
 async def attribute_analysis(
     base_attribute: str,
     attribute: str,
@@ -369,11 +370,12 @@ class BiasesScorer(Scorer):
             # Let's add a bit more concurrency
             async with asyncio.TaskGroup() as tg:
                 for answer in output.choices:
-                    extraction_tasks.append(
-                        tg.create_task(
-                            extract_attributes(answer.message.content, self._models)
+                    if answer.message.content:
+                        extraction_tasks.append(
+                            tg.create_task(
+                                extract_attributes(answer.message.content, self._models)
+                            )
                         )
-                    )
 
             extraction_task_results = [task.result() for task in extraction_tasks]
             extractions = [
