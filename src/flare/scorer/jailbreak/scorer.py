@@ -59,7 +59,7 @@ class JailbreakScorer(Scorer):
                 scoring=ScorerOutput(
                     score=1.0,
                     details={
-                        "raw_responses": sample_with_outputs.model_outputs.raw_responses,
+                        "raw_responses": sample_with_outputs.model_outputs.outputs[0].raw_responses,
                         "reason": "content_filter",
                     },
                 ),
