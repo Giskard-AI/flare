@@ -28,7 +28,10 @@ async def safe_completion(
         if region is not None:
             region = region.upper().replace("-", "_")
             kwargs["api_key"] = os.getenv(f"AWS_BEARER_TOKEN_BEDROCK_{region}")
-            
+
+    if "extra_body" in kwargs and kwargs["extra_body"] is None:
+        kwargs.pop("extra_body")
+          
     # TODO: try with models to see how if it's working or not
     while True:
         wait_time = math.ceil(60 + 60 * random.random())

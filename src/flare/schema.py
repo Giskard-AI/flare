@@ -76,7 +76,7 @@ class OutputUsage(FlareModel):
 
 class OutputChoice(FlareModel):
     finish_reason: Literal[
-        "stop", "length", "function_call", "content_filter", "tool_calls", "refusal", "null"
+        "stop", "length", "function_call", "content_filter", "tool_calls", "refusal", "null", "tool_call", ""
     ]
     index: int
     message: Message

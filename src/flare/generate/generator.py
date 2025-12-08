@@ -32,13 +32,15 @@ async def generate_output(
     **model_params,
 ) -> Output:
     params = generation.params.model_dump()
+    model_supports_tools = model_params.pop("supports_tools", True)
+
     if params["tools"] is None:
         params.pop("tools")
     else:
         # this is required because of side effect when using litellm with gemini models
         params["tools"] = deepcopy(params["tools"])
 
-    if not litellm.supports_function_calling(model) and "tools" in params:
+    if not model_supports_tools and "tools" in params:
         params["functions_unsupported_model"] = params.pop("tools")
     params.update(model_params)
 
