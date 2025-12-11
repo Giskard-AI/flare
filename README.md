@@ -57,7 +57,7 @@ Contains `SampleWithOutputs` objects (as defined in `flare.schema`):
 
 ```json
 {
-  "sample": {...}
+  "sample": { /* Sample object with id, module, task, language, generations, metadata, evaluation */ }
   },
   "model_outputs": {
     "model": "openai/gpt-4o",
@@ -70,38 +70,38 @@ Contains `SampleWithOutputs` objects (as defined in `flare.schema`):
             "index": 0,
             "message": {
               "role": "assistant",
-              "content": "..."
+              "content": "/* model response text */"
             }
           }
         ],
         "created": "2025-10-17T13:01:23",
         "usage": {
-          ...
+          /* prompt_tokens, completion_tokens, total_tokens, cost */
         },
-        "raw_responses": [...]
+        "raw_responses": [ /* array of raw API response objects */ ]
       }
     ]
   }
 }
 ```
 
-### 2. `runs/<run_name>/result/<model_name>/<module>/<task>/<sample_id>.json`
+### 2. `<run_path>/<run_name>/result/<model_name>/<module>/<task>/<sample_id>.json`
 
 Contains `SampleOutputsWithScore` objects (as defined in `flare.schema`):
 
 ```json
 {
   "sample_with_outputs": {
-    "sample": {...},
-    "model_outputs": {...}
+    "sample": { /* Sample object */ },
+    "model_outputs": { /* ModelOutputs object with model name and outputs array */ }
   },
   "scoring": {
     "score": 0.0,
     "details": {
-      "raw_responses": {...}
+      "raw_responses": { /* scorer-specific details, structure varies by scorer */ }
     },
     "usage": {
-      ...
+      /* dict mapping model names to OutputUsage objects with token counts and cost */
     }
   }
 }
