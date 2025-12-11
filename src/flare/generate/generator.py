@@ -40,6 +40,8 @@ async def generate_output(
         # this is required because of side effect when using litellm with gemini models
         params["tools"] = deepcopy(params["tools"])
 
+    # if the model does not support tools, use the litellm automatic instructions
+    # supports_tools=False must be explicitely set in the model config
     if not model_supports_tools and "tools" in params:
         params["functions_unsupported_model"] = params.pop("tools")
     params.update(model_params)
