@@ -27,7 +27,11 @@ SCORERS = {
 
 
 def get_scorer(
-    scorer_name: str, models: list[ScorerModelConfig], generators: list[ModelConfig], *args, **kwargs
+    scorer_name: str,
+    models: list[ScorerModelConfig],
+    generators: list[ModelConfig],
+    *args,
+    **kwargs,
 ) -> Scorer:
     if scorer_name == "biases/story_generation":
         kwargs["generators"] = generators

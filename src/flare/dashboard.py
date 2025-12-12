@@ -45,7 +45,7 @@ def setup_stats(layout) -> tuple[dict[str, Any], dict[str, Any]]:
     )
     for name in STATS["models"].keys():
         # Truncate model names to 30 characters for display
-        display_name =  "..." + name[-50:] if len(name) > 50 else name
+        display_name = "..." + name[-50:] if len(name) > 50 else name
         _task_mapping["models"][name] = generation_progress.add_task(
             display_name, total=STATS["nb_samples"]
         )
@@ -90,7 +90,8 @@ def setup_stats(layout) -> tuple[dict[str, Any], dict[str, Any]]:
         # Truncate scorer names to 30 characters for display
         display_name = name[:30] + "..." if len(name) > 30 else name
         _task_mapping["scorers"][name] = scorer_progress.add_task(
-            display_name, total=STATS["samples_per_model"][name] * len(STATS["models"].keys())
+            display_name,
+            total=STATS["samples_per_model"][name] * len(STATS["models"].keys()),
         )
 
     progress_table.add_row(

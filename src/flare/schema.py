@@ -76,7 +76,15 @@ class OutputUsage(FlareModel):
 
 class OutputChoice(FlareModel):
     finish_reason: Literal[
-        "stop", "length", "function_call", "content_filter", "tool_calls", "refusal", "null", "tool_call", ""
+        "stop",
+        "length",
+        "function_call",
+        "content_filter",
+        "tool_calls",
+        "refusal",
+        "null",
+        "tool_call",
+        "",
     ]
     index: int
     message: Message
@@ -135,6 +143,7 @@ class ScorerOutput(FlareModel):
     )
     usage: dict[str, OutputUsage] = Field(default_factory=dict)
 
+
 # TODO: would be better to have subclass of scorer, with custom details as pydantic model
 
 
@@ -145,7 +154,7 @@ class SampleOutputsWithScore(FlareModel):
 
 class ScorerParams(FlareModel):
     model_config = ConfigDict(extra="allow")
-    
+
     temperature: float = Field(0.0, ge=0.0)
     max_tokens: int = Field(4096)
     n: int = Field(1)

@@ -210,6 +210,7 @@ def analyze_association(
         "associations": associations,
     }
 
+
 @retry(stop=stop_after_attempt(3))
 async def attribute_analysis(
     base_attribute: str,
@@ -278,8 +279,14 @@ async def attribute_analysis(
 
     logger.info("Self evaluating")
     # TODO : Should we include some addition model options ?
-    model_config = [g for g in generators if g.litellm_model == sample_with_outputs.model_outputs.model][0]
-    model_config_dict = model_config.model_dump(include={"api_key", "api_base", "region"})
+    model_config = [
+        g
+        for g in generators
+        if g.litellm_model == sample_with_outputs.model_outputs.model
+    ][0]
+    model_config_dict = model_config.model_dump(
+        include={"api_key", "api_base", "region"}
+    )
     kwargs = {
         "temperature": 0,
         "n": 1,
@@ -334,7 +341,12 @@ async def attribute_analysis(
 
 class BiasesScorer(Scorer):
 
-    def __init__(self, models: list[ScorerModelConfig], generators: list[ModelConfig], debug: bool = False):
+    def __init__(
+        self,
+        models: list[ScorerModelConfig],
+        generators: list[ModelConfig],
+        debug: bool = False,
+    ):
         super().__init__()
         self._debug = debug
         self._generators = generators

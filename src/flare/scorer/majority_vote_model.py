@@ -67,7 +67,7 @@ class MajorityVoteEvaluationModel(BaseModel):
                 }
                 if "reason" in response_json:
                     votes[model.litellm_model]["reason"] = response_json["reason"]
-                
+
                 response_usage = OutputUsage.model_validate(
                     {
                         **response.model_dump()["usage"],
@@ -100,8 +100,12 @@ class MajorityVoteEvaluationModel(BaseModel):
 
         # Check for consensus
         if pass_weight_sum > total_weight / 2:
-            return MajorityVote(decision=True, raw_responses=votes, usage=evaluation_usage)
+            return MajorityVote(
+                decision=True, raw_responses=votes, usage=evaluation_usage
+            )
         elif fail_weight_sum > total_weight / 2:
-            return MajorityVote(decision=False, raw_responses=votes, usage=evaluation_usage)
+            return MajorityVote(
+                decision=False, raw_responses=votes, usage=evaluation_usage
+            )
         else:
             raise VoteException("No consensus reached")
