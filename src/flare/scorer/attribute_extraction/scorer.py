@@ -168,8 +168,6 @@ class AttributeExtractionScorer(Scorer):
 
         logger.info("Done extracting for sample")
 
-
-
         # Save the association values to the model answer
         result_details = {
             "base_attribute": sample_with_outputs.sample.evaluation.data["attribute"],
@@ -182,4 +180,3 @@ class AttributeExtractionScorer(Scorer):
             scoring=ScorerOutput(score=1.0, details=result_details),
         )
         return sample_with_score
-            
