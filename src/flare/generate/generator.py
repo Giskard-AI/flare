@@ -66,7 +66,7 @@ async def generate_output(
             {
                 **response.model_dump()["usage"],
                 **(
-                    {"cost": response._hidden_params["response_cost"]}
+                    {"cost": response._hidden_params.get("response_cost", 0)}
                     if not response.model_dump()["usage"].get("cost")
                     else {}
                 ),
