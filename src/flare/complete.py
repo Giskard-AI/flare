@@ -6,7 +6,14 @@ import os
 import random
 from typing import Any
 
-from litellm import ModelResponse, RateLimitError, acompletion
+from litellm import (
+    BadRequestError,
+    Choices,
+    Message,
+    ModelResponse,
+    RateLimitError,
+    acompletion,
+)
 
 # https://docs.litellm.ai/docs/exception_mapping
 
@@ -54,6 +61,10 @@ async def safe_completion(
                 "Waiting for %ss before next retry", wait_time, exc_info=True
             )
             await asyncio.sleep(wait_time)
+        except BadRequestError as e:
+            if "Invalid prompt" in e.message:
+                return ModelResponse(choices=[Choices(message=Message(content=""), finish_reason="content_filter")])
+            raise e
         except Exception as e:
             nb_fail += 1
             if nb_fail >= nb_try:
