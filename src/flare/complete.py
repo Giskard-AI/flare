@@ -63,7 +63,13 @@ async def safe_completion(
             await asyncio.sleep(wait_time)
         except BadRequestError as e:
             if "Invalid prompt" in e.message:
-                return ModelResponse(choices=[Choices(message=Message(content=""), finish_reason="content_filter")])
+                return ModelResponse(
+                    choices=[
+                        Choices(
+                            message=Message(content=""), finish_reason="content_filter"
+                        )
+                    ]
+                )
             raise e
         except Exception as e:
             nb_fail += 1

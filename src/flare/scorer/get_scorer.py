@@ -1,5 +1,6 @@
 # from .factuality.scorer import FactualityScorer
 from flare.schema import ModelConfig, ScorerModelConfig
+from flare.scorer.attribute_extraction.scorer import AttributeExtractionScorer
 from flare.scorer.base import Scorer
 from flare.scorer.bias.scorer import BiasesScorer
 from flare.scorer.debunking.scorer import DebunkingScorer
@@ -23,6 +24,7 @@ SCORERS = {
     "jailbreak/encoding": EncodingJailbreakScorer,
     "jailbreak/injection": InjectionJailbreakScorer,
     "jailbreak/framing": FramingJailbreakScorer,
+    "biases/story_generation_v2": AttributeExtractionScorer,
 }
 
 
