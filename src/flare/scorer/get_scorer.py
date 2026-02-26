@@ -24,7 +24,7 @@ SCORERS = {
     "jailbreak/encoding": EncodingJailbreakScorer,
     "jailbreak/injection": InjectionJailbreakScorer,
     "jailbreak/framing": FramingJailbreakScorer,
-    "biases/story_generation_v2": AttributeExtractionScorer,
+    "biases/attribute_extraction": AttributeExtractionScorer,
 }
 
 
