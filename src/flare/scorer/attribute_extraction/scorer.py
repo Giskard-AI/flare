@@ -112,12 +112,10 @@ class AttributeExtractionScorer(Scorer):
     def __init__(
         self,
         models: list[ScorerModelConfig],
-        generators: list[ModelConfig],
         debug: bool = False,
     ):
         super().__init__()
         self._debug = debug
-        self._generators = generators
         self._models = models
 
     @classmethod
