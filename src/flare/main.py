@@ -141,6 +141,18 @@ def main_cli():
         default=1e9,
         help="Maximum number of samples per task",
     )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        default=False,
+        help="Enable debug logging for flare",
+    )
+    parser.add_argument(
+        "--litellm-debug",
+        action="store_true",
+        default=False,
+        help="Enable verbose litellm debug logging (very noisy)",
+    )
     dotenv.load_dotenv()
 
     args = parser.parse_args()
@@ -149,7 +161,12 @@ def main_cli():
     if not run_path.exists():
         run_path.mkdir(parents=True, exist_ok=True)
 
-    setup_log(run_path)
+    setup_log(run_path, level="DEBUG" if args.debug else "INFO")
+
+    if args.litellm_debug:
+        import litellm
+
+        litellm._turn_on_debug()
     uvloop.run(
         main(
             run_name=args.name,

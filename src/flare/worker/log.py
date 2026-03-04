@@ -6,7 +6,7 @@ from pathlib import Path
 LOG_FILE = "run.log"
 
 
-def setup_log(log_path: Path):
+def setup_log(log_path: Path, level: str = "INFO"):
     # Initialisation of the logs, by making httpx a bit more silent
     logging.config.dictConfig(
         {"version": 1, "loggers": {"httpx": {"level": "WARNING"}}}
@@ -19,7 +19,7 @@ def setup_log(log_path: Path):
     log_file_path.unlink(missing_ok=True)
     # Now, we finish log config
     logging.basicConfig(
-        level="INFO",
+        level=level,
         filename=str(log_file_path),
         format="[blue]%(asctime)s[/blue] [bold green]%(levelname)-8s[/green bold] [bold cyan]%(name)s[/cyan bold] %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
