@@ -9,7 +9,11 @@ LOG_FILE = "run.log"
 def setup_log(log_path: Path, level: str = "INFO"):
     # Initialisation of the logs, by making httpx a bit more silent
     logging.config.dictConfig(
-        {"version": 1, "loggers": {"httpx": {"level": "WARNING"}}}
+        {
+            "version": 1,
+            "disable_existing_loggers": False,
+            "loggers": {"httpx": {"level": "WARNING"}},
+        }
     )
     # First, we clean up the log file if needed (ie we rename with timestamp)
     log_file_path = log_path / LOG_FILE
