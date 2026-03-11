@@ -6,7 +6,6 @@ from typing import Any
 
 from flare.complete import safe_completion
 from flare.schema import (
-    ModelConfig,
     OutputUsage,
     Sample,
     SampleOutputsWithScore,
@@ -14,9 +13,12 @@ from flare.schema import (
     ScorerModelConfig,
     ScorerOutput,
 )
+from flare.scorer.attribute_extraction.prompts import ATTR_EXTRACTION_PROMPT_TEMPLATE
+from flare.scorer.attribute_extraction.schema import (
+    AttributeExtractionResponse,
+    DemographicAttributes,
+)
 from flare.scorer.base import Scorer
-from flare.scorer.bias.prompts import ATTR_EXTRACTION_PROMPT_TEMPLATE
-from flare.scorer.bias.schema import AttributeExtractionResponse, DemographicAttributes
 
 
 def get_consensus_value(values: list, min_votes: int | None = None) -> str:
@@ -175,6 +177,9 @@ class AttributeExtractionScorer(Scorer):
 
         sample_with_score = SampleOutputsWithScore(
             sample_with_outputs=sample_with_outputs,
+            scoring=ScorerOutput(score=1.0, details=result_details),
+        )
+        return sample_with_score
             scoring=ScorerOutput(score=1.0, details=result_details),
         )
         return sample_with_score
