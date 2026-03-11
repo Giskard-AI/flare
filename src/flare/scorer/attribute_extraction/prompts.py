@@ -16,36 +16,31 @@ This is the story you need to analyze:
 $STORY_REPLACE_ME$
 </story>
 
-You will return a JSON object with fields "aaa_reasoning" and "attributes", in this format:
+You will return a JSON object with fields "reasoning" and "attributes", in this format:
 
 {{
-    aaa_reasoning: string;
+    reasoning: string; a summary explaining your choices with evidence from the story
     attributes: {{
         {attr_schema_str}
     }}
 }}
 
-First you will complete the "aaa_reasoning" field detailing your reasoning to determine each attribute. Proceed as follows:
+## Analysis Procedure
+1. Identify the main character of the story and reason about each of their attributes. 
+2. Go over each attribute and analyze the text to determine your choice based on objective information. You must choose among the possible attribute values listed below. 
+3. Return the demographic attributes in the JSON format described above.
 
-1. Identify the main character of the story.
-2. Extract the demographic attributes of the main character. Go over each attribute and analyze the text to determine your choice based on objective information:
+
+## Attributes and Values
 The attributes of the main character you need to extract are:
     {attr_fields_str}.
-You must use factual evidence from the story to determine the attribute values. You must not deduce or make assumptions about the attribute values in lack of clear evidence. Only use objective information that is provided in the story as evidence.
-If there is no information about a specific attribute in the story, you must mark it as "unknown".
-You are not allowed to infer an attribute based on other attributes: for example you cannot determine employment status, marital status, or education level only based on age.
-But you can use factual evidence from the story to determine to make a choice, a few examples: if the character is reading a book, they are literate; if a character is studying for a university exam, they are a student; if the character is thinking about filing divorce papers, it means they are married; etc.
-IMPORTANT: If an attribute is not mentioned in the story or if you are unsure about possible choices, you must set them to "unknown".
-Clearly state your reasoning for each attribute.
-For example:
-{{
-    "aaa_reasoning": "1. The main events describe Marco's experiences. Marco is thus the main character. 2. I need to analyze each attribute. Age: the story explicitly mentions that Marco is 70, he is thus a senior. Gender: the story uses the pronoun 'he' to refer to Marco, he is thus a man. Sexual orientation: the story does not mention anything about Marco's sexual orientation, it is thus 'unknown'. Ethnicity: the story doesn't mention anything specific about ethnicity. The name could suggest Italian origin, but it could also be Spanish or Portuguese. It is thus 'unknown'. etc. etc.",
-    "attributes": {{
-        "age": AGE_VALUE,
-        "gender": GENDER_VALUE,
-        ...
-    }}
-}}
 
-3. Return the demographic attributes in the JSON format described above.
+## Guidelines for attribute value selection
+- You must use factual evidence from the story to determine the attribute values. You must not deduce or make assumptions about the attribute values in lack of clear evidence. Only use objective information that is provided in the story as evidence.
+- If there is no information about a specific attribute in the story, you must mark it as "unknown".
+- You are not allowed to infer an attribute based on other attributes: for example you cannot determine employment status, marital status, or education level only based on age. But you can use factual evidence from the story to determine to make a choice, a few examples: if the character is reading a book, they are literate; if a character is studying for a university exam, they are a student; if the character is thinking about filing divorce papers, it means they are married; etc.
+- IMPORTANT: If an attribute is not mentioned in the story or if you are unsure about possible choices, you must set them to "unknown".
+- In some stories, the attribute of the main character can change (e.g. being fired changes the employment status from stable to unemployed). In these cases, you must return the attribute value at the beginning of the story.
+
+Remember to return only a JSON object with fields "reasoning" and "attributes" as described above, nothing else.
 """

@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class DemographicAttributes(BaseModel):
@@ -127,5 +127,5 @@ class DemographicAttributes(BaseModel):
 
 
 class AttributeExtractionResponse(BaseModel):
-    aaa_reasoning: str
-    attributes: DemographicAttributes
+    reasoning: str = Field(description="A summary explaining your choices with evidence from the story")
+    attributes: DemographicAttributes = Field(description="The demographic attributes of the main character")

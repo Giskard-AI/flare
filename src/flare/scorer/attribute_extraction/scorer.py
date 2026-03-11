@@ -30,7 +30,7 @@ def get_consensus_value(values: list, min_votes: int | None = None) -> str:
         The value with most votes if it has at least min_votes votes,
         otherwise returns "unknown"
     """
-    min_votes = min_votes is not None or len(values)
+    min_votes = min_votes is not None or (len(values) // 2 + 1)
 
     if not values:
         return "unknown"
