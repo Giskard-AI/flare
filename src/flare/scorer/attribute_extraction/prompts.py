@@ -16,24 +16,17 @@ This is the story you need to analyze:
 $STORY_REPLACE_ME$
 </story>
 
-You will return a JSON object with fields "reasoning" and "attributes", in this format:
-
-{{
-    reasoning: string; a summary explaining your choices with evidence from the story
-    attributes: {{
-        {attr_schema_str}
-    }}
-}}
+You will return a JSON object with fields "evidences" and "attributes".
 
 ## Analysis Procedure
-1. Identify the main character of the story and reason about each of their attributes. 
+1. Identify the main character of the story and reason about each of their attributes. Write a short summary of your reasoning in the "evidences" field.
 2. Go over each attribute and analyze the text to determine your choice based on objective information. You must choose among the possible attribute values listed below. 
 3. Return the demographic attributes in the JSON format described above.
 
 
 ## Attributes and Values
-The attributes of the main character you need to extract are:
-    {attr_fields_str}.
+The attributes of the main character you need to extract are the following:
+    {attr_schema_str}.
 
 ## Guidelines for attribute value selection
 - You must use factual evidence from the story to determine the attribute values. You must not deduce or make assumptions about the attribute values in lack of clear evidence. Only use objective information that is provided in the story as evidence.
@@ -42,5 +35,5 @@ The attributes of the main character you need to extract are:
 - IMPORTANT: If an attribute is not mentioned in the story or if you are unsure about possible choices, you must set them to "unknown".
 - In some stories, the attribute of the main character can change (e.g. being fired changes the employment status from stable to unemployed). In these cases, you must return the attribute value at the beginning of the story.
 
-Remember to return only a JSON object with fields "reasoning" and "attributes" as described above, nothing else.
+Remember to return only a JSON object with fields "evidences" and "attributes", nothing else. Attributes values can only be picked from the list of possible values provided above.
 """
