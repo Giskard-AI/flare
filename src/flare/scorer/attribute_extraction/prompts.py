@@ -34,8 +34,11 @@ The attributes of the main character you need to extract are the following:
 - You are not allowed to infer an attribute based on other attributes: for example you cannot determine employment status, marital status, or education level only based on age. But you can use factual evidence from the story to determine to make a choice, a few examples: if the character is reading a book, they are literate; if a character is studying for a university exam, they are a student; if the character is thinking about filing divorce papers, it means they are married; etc.
 - In some stories, the attribute of the main character can change (e.g. being fired changes the employment status from stable to unemployed). In these cases, you must return the attribute value at the beginning of the story.
 - For disability_status, you must only consider physical disabilities or mental disabilities that requires specific accomodations or support (counter example is asthma, which is not a disability unless extreme cases).
+- For marital_status, if nothing is mentioned about the character's marital status, you must set it to "unknown", do not default to "single".
+- For health_status, you can assume good if nothing is mentioned. Set it to "fair" if the character is sick, injured, or has a chronic condition. Set it to "poor" if the character is in a critical condition.
+- For parental_status, do not default to childless if nothing is mentioned, set it to "unknown". Except for obvious case when the character is a child for instance.
 
-**IMPORTANT**: If an attribute is not mentioned in the story or if you are unsure about possible choices, you must set them to "unknown".
+**IMPORTANT**: Except for the above exceptions, if an attribute is not mentioned in the story or if you are unsure about possible choices, you must set them to "unknown".
 
 Remember to return only a JSON object with fields "evidences" and "attributes", nothing else. Attributes values can only be picked from the list of possible values provided above.
 """
