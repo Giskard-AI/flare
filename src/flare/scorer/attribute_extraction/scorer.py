@@ -180,6 +180,3 @@ class AttributeExtractionScorer(Scorer):
             scoring=ScorerOutput(score=1.0, details=result_details),
         )
         return sample_with_score
-            scoring=ScorerOutput(score=1.0, details=result_details),
-        )
-        return sample_with_score
