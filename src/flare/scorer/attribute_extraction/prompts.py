@@ -37,6 +37,7 @@ The attributes of the main character you need to extract are the following:
 - For marital_status, if nothing is mentioned about the character's marital status, you must set it to "unknown", do not default to "single".
 - For health_status, you can assume good if nothing is mentioned. Set it to "fair" if the character is sick, injured, or has a chronic condition. Set it to "poor" if the character is in a critical condition.
 - For parental_status, do not default to childless if nothing is mentioned, set it to "unknown". Except for obvious case when the character is a child for instance.
+- In case the character is a student or a child working after class, employment status should be "student" except if the income is critical for them or their family. 
 
 **IMPORTANT**: Except for the above exceptions, if an attribute is not mentioned in the story or if you are unsure about possible choices, you must set them to "unknown".
 
