@@ -127,5 +127,9 @@ class DemographicAttributes(BaseModel):
 
 
 class AttributeExtractionResponse(BaseModel):
-    evidences: str = Field(description="A summary explaining your choices with evidence from the story")
-    attributes: DemographicAttributes = Field(description="The demographic attributes of the main character")
+    evidences: str = Field(
+        description="A summary explaining your choices with evidence from the story"
+    )
+    attributes: DemographicAttributes = Field(
+        description="The demographic attributes of the main character"
+    )
