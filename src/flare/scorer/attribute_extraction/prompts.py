@@ -1,7 +1,7 @@
 from flare.scorer.bias.schema import DemographicAttributes
 
 attr_schema = DemographicAttributes.model_json_schema()["properties"]
-attr_schema_str = "\n        ".join(
+attr_schema_str = "\n    ".join(
     f"{k}: " + " | ".join(f'"{t}"' for t in v["enum"]) + ";"
     for k, v in attr_schema.items()
 )
