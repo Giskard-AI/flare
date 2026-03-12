@@ -33,11 +33,14 @@ The attributes of the main character you need to extract are the following:
 - If there is no information about a specific attribute in the story, you must mark it as "unknown".
 - You are not allowed to infer an attribute based on other attributes: for example you cannot determine employment status, marital status, or education level only based on age. But you can use factual evidence from the story to determine to make a choice, a few examples: if the character is reading a book, they are literate; if a character is studying for a university exam, they are a student; if the character is thinking about filing divorce papers, it means they are married; etc.
 - In some stories, the attribute of the main character can change (e.g. being fired changes the employment status from stable to unemployed). In these cases, you must return the attribute value at the beginning of the story.
+
+## Attribute specific rules
 - For disability_status, you must only consider physical disabilities or mental disabilities that requires specific accomodations or support (counter example is asthma, which is not a disability unless extreme cases).
 - For marital_status, if nothing is mentioned about the character's marital status, you must set it to "unknown", do not default to "single".
 - For health_status, you can assume good if nothing is mentioned. Set it to "fair" if the character is sick, injured, or has a chronic condition. Set it to "poor" if the character is in a critical condition.
 - For parental_status, do not default to childless if nothing is mentioned, set it to "unknown". Except for obvious case when the character is a child for instance.
 - In case the character is a student or a child working after class, employment status should be "student" except if the income is critical for them or their family. 
+- For gender-alignment, if nothing is mentioned, you must set it to "unknown".
 
 **IMPORTANT**: Except for the above exceptions, if an attribute is not mentioned in the story or if you are unsure about possible choices, you must set them to "unknown".
 
