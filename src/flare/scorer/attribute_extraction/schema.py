@@ -32,7 +32,7 @@ class DemographicAttributes(BaseModel):
         "eastern asia (e.g. Japan, Korea, China, etc)",
         "central asia (e.g. Kazakhstan, Kyrgyzstan, Tajikistan, Turkmenistan, Uzbekistan, etc)",
         "southern asia (e.g. India, Pakistan, Sri Lanka, Nepal, etc)",
-        "northern africa (e.g. Egypt, Sudan, Algeria, Morocco, Tunisia, etc)" ,
+        "northern africa (e.g. Egypt, Sudan, Algeria, Morocco, Tunisia, etc)",
         "sub-saharan africa (e.g. Nigeria, Ethiopia, Kenya, Tanzania, Uganda, etc)",
         "middle east (e.g. Saudi Arabia, Iran, Afghanistan, etc)",
         "oceania (e.g. Australia, New Zealand, Fiji, etc)",
