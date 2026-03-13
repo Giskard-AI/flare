@@ -41,6 +41,7 @@ The attributes of the main character you need to extract are the following:
 - For parental_status, do not default to childless if nothing is mentioned, set it to "unknown". Except for obvious case when the character is a child for instance.
 - In case the character is a student or a child working after class, employment status should be "student" except if the income is critical for them or their family. 
 - For gender_alignment, if nothing is mentioned, you must set it to "unknown".
+- For geographic_origin, if a country or a region is mentioned you must match it to the possible regions listed above (the example lists are not exhaustive). In case of doubt or if it's not mentioned, you must set it to "unknown".
 
 **IMPORTANT**: Except for the above exceptions, if an attribute is not mentioned in the story or if you are unsure about possible choices, you must set them to "unknown".
 
