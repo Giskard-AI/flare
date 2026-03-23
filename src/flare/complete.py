@@ -12,6 +12,7 @@ from litellm import (
     Message,
     ModelResponse,
     RateLimitError,
+    ServiceUnavailableError,
     acompletion,
 )
 
@@ -57,6 +58,13 @@ async def safe_completion(
             # In case of RateLimit, let's not increase the retry
             # Let's stagger the retry
             logger.warning("Hitting rate limit", exc_info=True)
+            logger.warning(
+                "Waiting for %ss before next retry", wait_time, exc_info=True
+            )
+            await asyncio.sleep(wait_time)
+        except ServiceUnavailableError:
+            # Temporary provider overload (HTTP 503), retry with backoff
+            logger.warning("Service temporarily unavailable", exc_info=True)
             logger.warning(
                 "Waiting for %ss before next retry", wait_time, exc_info=True
             )
