@@ -82,7 +82,7 @@ async def safe_completion(
         except Exception as e:
             nb_fail += 1
             if nb_fail >= nb_try:
-                raise RuntimeError("Too many tries, cannot do completion") from e
+                raise RuntimeError(f"Too many tries, cannot do completion: {e}") from e
             logger.warning("Unexpected error while decoding response", exc_info=True)
             if isinstance(e, json.JSONDecodeError):
                 logger.warning(f"Raw response: {response}")
