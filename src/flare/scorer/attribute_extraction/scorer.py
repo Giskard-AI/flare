@@ -74,6 +74,15 @@ async def extract_attribute_one_model(
     return parsed, response_dump
 
 
+async def safe_extract_attribute_one_model(
+    prompt: str, model_config: ScorerModelConfig
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    try:
+        return await extract_attribute_one_model(prompt, model_config)
+    except Exception as e:
+        return None, {"error": str(e), "model": model_config.litellm_model}
+
+
 async def extract_attributes(
     story: str, models: list[ScorerModelConfig]
 ) -> tuple[DemographicAttributes, list[dict[str, Any]]]:
@@ -86,7 +95,7 @@ async def extract_attributes(
         for model_config in models:
             tasks.append(
                 tg.create_task(
-                    extract_attribute_one_model(
+                    safe_extract_attribute_one_model(
                         prompt=prompt, model_config=model_config
                     )
                 )
@@ -95,6 +104,9 @@ async def extract_attributes(
     for task in tasks:
         parsed, raw_answer = task.result()
         raw_answers.append(raw_answer)
+
+        if parsed is None:
+            continue
 
         for attr, value in parsed["attributes"].items():
             attributes[attr].append(value)

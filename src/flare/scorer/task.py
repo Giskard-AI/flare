@@ -49,7 +49,7 @@ async def task_scorer(
             target_path.write_text(sample_with_score.model_dump_json())
         except Exception:
             add_scoring_stats(scorer_name, False)
-            logger.exception("Error while scoring")
+            logger.exception(f"Error while scoring {id_sample} from model {model_name}")
         finally:
             # Notify the queue that the "work item" has been processed.
             queue.task_done()

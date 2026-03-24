@@ -12,6 +12,7 @@ from litellm import (
     Message,
     ModelResponse,
     RateLimitError,
+    ServiceUnavailableError,
     acompletion,
 )
 
@@ -61,6 +62,13 @@ async def safe_completion(
                 "Waiting for %ss before next retry", wait_time, exc_info=True
             )
             await asyncio.sleep(wait_time)
+        except ServiceUnavailableError:
+            # Temporary provider overload (HTTP 503), retry with backoff
+            logger.warning("Service temporarily unavailable", exc_info=True)
+            logger.warning(
+                "Waiting for %ss before next retry", wait_time, exc_info=True
+            )
+            await asyncio.sleep(wait_time)
         except BadRequestError as e:
             if "Invalid prompt" in e.message:
                 return ModelResponse(
@@ -74,7 +82,7 @@ async def safe_completion(
         except Exception as e:
             nb_fail += 1
             if nb_fail >= nb_try:
-                raise RuntimeError("Too many tries, cannot do completion") from e
+                raise RuntimeError(f"Too many tries, cannot do completion: {e}") from e
             logger.warning("Unexpected error while decoding response", exc_info=True)
             if isinstance(e, json.JSONDecodeError):
                 logger.warning(f"Raw response: {response}")
