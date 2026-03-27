@@ -136,7 +136,7 @@ async def detect_refusal(
     refusal_detection_tasks = []
     async with asyncio.TaskGroup() as tg:
         for model_config in models:
-            if model_config.get("refusal_detector", None):
+            if model_config.model_dump().get("refusal_detector", False):
                 refusal_detection_tasks.append(
                     tg.create_task(
                         safe_refusal_detection_one_model(prompt, model_config)
