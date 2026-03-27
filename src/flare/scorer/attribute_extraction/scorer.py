@@ -13,10 +13,14 @@ from flare.schema import (
     ScorerModelConfig,
     ScorerOutput,
 )
-from flare.scorer.attribute_extraction.prompts import ATTR_EXTRACTION_PROMPT_TEMPLATE
+from flare.scorer.attribute_extraction.prompts import (
+    ATTR_EXTRACTION_PROMPT_TEMPLATE,
+    REFUSAL_JUDGE_PROMPT_TEMPLATE,
+)
 from flare.scorer.attribute_extraction.schema import (
     AttributeExtractionResponse,
     DemographicAttributes,
+    RefusalDetectionResponse,
 )
 from flare.scorer.base import Scorer
 
@@ -83,9 +87,94 @@ async def safe_extract_attribute_one_model(
         return None, {"error": str(e), "model": model_config.litellm_model}
 
 
+async def safe_refusal_detection_one_model(
+    prompt: str, model_config: ScorerModelConfig
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    try:
+        response = await safe_completion(
+            model_name=model_config.litellm_model,
+            messages=[{"role": "user", "content": prompt}],
+            nb_try=3,
+            ensure_json=True,
+            response_format=RefusalDetectionResponse,
+            **model_config.generation_kwargs.model_dump(),
+        )
+        parsed = json.loads(response.choices[0].message.content, strict=False)
+        response_usage = OutputUsage.model_validate(
+            {
+                **response.model_dump()["usage"],
+                **(
+                    {"cost": response._hidden_params["response_cost"]}
+                    if not response.model_dump()["usage"].get("cost")
+                    else {}
+                ),
+            }
+        )
+        response_dump = response.model_dump()
+        response_dump["usage"] = response_usage.model_dump()
+        return parsed, response_dump
+    except Exception as e:
+        return None, {"error": str(e), "model": model_config.litellm_model}
+
+
+async def detect_refusal(
+    story: str,
+    language: str,
+    scenario_key: str,
+    attribute_value_key: str,
+    models: list[ScorerModelConfig],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    answers = []
+    raw_answers = []
+    prompt = REFUSAL_JUDGE_PROMPT_TEMPLATE.format(
+        language=language,
+        scenario_key=scenario_key,
+        attribute_value_key=attribute_value_key,
+        assistant_output=story,
+    )
+
+    refusal_detection_tasks = []
+    async with asyncio.TaskGroup() as tg:
+        for model_config in models:
+            if model_config.get("refusal_detector", None):
+                refusal_detection_tasks.append(
+                    tg.create_task(
+                        safe_refusal_detection_one_model(prompt, model_config)
+                    )
+                )
+
+    for task in refusal_detection_tasks:
+        parsed, raw_answer = task.result()
+        if parsed is None:
+            continue
+        answers.append("complied" if parsed.get("label") == "complied" else "refusal")
+        raw_answers.append(raw_answer)
+    consensus_answer = get_consensus_value(answers)
+
+    if consensus_answer == "unknown":
+        return "refusal", raw_answers
+    return consensus_answer, raw_answers
+
+
 async def extract_attributes(
-    story: str, models: list[ScorerModelConfig]
+    story: str,
+    language: str,
+    scenario_key: str,
+    attribute_value_key: str,
+    models: list[ScorerModelConfig],
 ) -> tuple[DemographicAttributes, list[dict[str, Any]]]:
+
+    refusal_answer, raw_refusal_answers = await detect_refusal(
+        story, language, scenario_key, attribute_value_key, models
+    )
+    if refusal_answer == "refusal":
+        return (
+            DemographicAttributes.model_validate(
+                {k: "unknown" for k in DemographicAttributes.model_fields.keys()}
+            ),
+            raw_refusal_answers,
+        )
+
     attributes = defaultdict(list)
     raw_answers = []
     prompt = ATTR_EXTRACTION_PROMPT_TEMPLATE.replace("$STORY_REPLACE_ME$", story)
@@ -160,9 +249,23 @@ class AttributeExtractionScorer(Scorer):
             async with asyncio.TaskGroup() as tg:
                 for answer in output.choices:
                     if answer.message.content:
+                        story = answer.message.content
+                        language = sample_with_outputs.sample.language
+                        scenario_key = sample_with_outputs.sample.metadata.get(
+                            "scenario_key"
+                        )
+                        attribute_value_key = sample_with_outputs.sample.metadata.get(
+                            "attribute_value_key"
+                        )
                         extraction_tasks.append(
                             tg.create_task(
-                                extract_attributes(answer.message.content, self._models)
+                                extract_attributes(
+                                    story,
+                                    language,
+                                    scenario_key,
+                                    attribute_value_key,
+                                    self._models,
+                                )
                             )
                         )
 

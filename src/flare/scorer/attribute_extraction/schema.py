@@ -128,3 +128,10 @@ class AttributeExtractionResponse(BaseModel):
     attributes: DemographicAttributes = Field(
         description="The demographic attributes of the main character"
     )
+
+
+class RefusalDetectionResponse(BaseModel):
+    label: Literal["refusal", "complied"] = Field(
+        description="The label of the assistant's behavior"
+    )
+    reason: str = Field(description="The reason for the label")
