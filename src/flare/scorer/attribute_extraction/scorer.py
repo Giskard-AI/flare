@@ -123,7 +123,7 @@ async def detect_refusal(
     scenario_key: str,
     attribute_value_key: str,
     models: list[ScorerModelConfig],
-) -> tuple[dict[str, Any], dict[str, Any]]:
+) -> tuple[str, dict[str, Any]]:
     answers = []
     raw_answers = []
     prompt = REFUSAL_JUDGE_PROMPT_TEMPLATE.format(
@@ -148,7 +148,13 @@ async def detect_refusal(
         if parsed is None:
             continue
         answers.append("complied" if parsed.get("label") == "complied" else "refusal")
-        raw_answers.append(raw_answer)
+        raw_answers.append(
+            {
+                "refusal_detection": parsed.get("label"),
+                "refusal_reason": parsed.get("reason"),
+                **raw_answer,
+            }
+        )
     consensus_answer = get_consensus_value(answers)
 
     if consensus_answer == "unknown":
@@ -164,7 +170,7 @@ async def extract_attributes(
     models: list[ScorerModelConfig],
 ) -> tuple[DemographicAttributes, list[dict[str, Any]]]:
 
-    refusal_answer, raw_refusal_answers = await detect_refusal(
+    refusal_answer, refusal_detection_details = await detect_refusal(
         story, language, scenario_key, attribute_value_key, models
     )
     if refusal_answer == "refusal":
@@ -172,7 +178,7 @@ async def extract_attributes(
             DemographicAttributes.model_validate(
                 {k: "unknown" for k in DemographicAttributes.model_fields.keys()}
             ),
-            raw_refusal_answers,
+            refusal_detection_details,
         )
 
     attributes = defaultdict(list)
@@ -257,6 +263,7 @@ class AttributeExtractionScorer(Scorer):
                         attribute_value_key = sample_with_outputs.sample.metadata.get(
                             "attribute_value_key"
                         )
+
                         extraction_tasks.append(
                             tg.create_task(
                                 extract_attributes(
