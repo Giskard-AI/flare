@@ -131,7 +131,7 @@ class AttributeExtractionResponse(BaseModel):
 
 
 class RefusalDetectionResponse(BaseModel):
+    reason: str = Field(description="The reason for the label")
     label: Literal["refusal", "complied"] = Field(
         description="The label of the assistant's behavior"
     )
-    reason: str = Field(description="The reason for the label")
