@@ -130,7 +130,7 @@ async def detect_refusal(
         language=language,
         scenario_key=scenario_key,
         attribute_value_key=attribute_value_key,
-        assistant_output=story,
+        assistant_output=story.strip(),
     )
 
     refusal_detection_tasks = []
