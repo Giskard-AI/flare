@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 from copy import deepcopy
 
 from flare.generate.task import task_generate
@@ -15,14 +16,16 @@ _workers_scorer: dict[str, list[asyncio.Task]] = {}
 _queues_generator: dict[str, asyncio.Queue[Sample]] = {}
 _workers_generator: dict[str, list[asyncio.Task]] = {}
 
+DEFAULT_SCORER_QUEUE_MAXSIZE = int(os.getenv("DEFAULT_SCORER_QUEUE_MAXSIZE", "100"))
+
 
 def register_scorer(
     run_name: str, scorer_name: str, conf: ScorerConfig, generators: list[ModelConfig]
 ):
     # Create the scored tasks
     # We create a shared queue with all the workers for a same scorer
-    queue = asyncio.Queue()
     parallelism = conf.parallelism
+    queue = asyncio.Queue(maxsize=DEFAULT_SCORER_QUEUE_MAXSIZE * parallelism)
     scorer_instance = get_scorer(scorer_name, conf.models, generators=generators)
     _queues_scorer[scorer_name] = queue
     _workers_scorer[scorer_name] = []
@@ -56,8 +59,8 @@ def submit_sample(sample: Sample):
         queue.put_nowait(deepcopy(sample))
 
 
-def submit_to_scorer(sample_with_outputs: SampleWithOutputs):
-    _queues_scorer[sample_with_outputs.sample.evaluation.scorer].put_nowait(
+async def submit_to_scorer(sample_with_outputs: SampleWithOutputs):
+    await _queues_scorer[sample_with_outputs.sample.evaluation.scorer].put(
         deepcopy(sample_with_outputs)
     )
 
