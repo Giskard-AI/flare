@@ -36,17 +36,16 @@ async def task_scorer(
             if target_path.is_file():
                 logger.info("Skipping path : %s", str(target_path))
                 add_scoring_stats(scorer_name, True)
-                continue
+            else:
+                logger.info("Scoring sample %s", id_sample)
+                sample_with_score = await scorer_instance.score(
+                    sample_with_outputs, logger=logger
+                )
+                logger.info("Scorer done on %s", sample_with_outputs.sample.id)
+                add_scoring_stats(scorer_name, True)
 
-            logger.info("Scoring sample %s", id_sample)
-            sample_with_score = await scorer_instance.score(
-                sample_with_outputs, logger=logger
-            )
-            logger.info("Scorer done on %s", sample_with_outputs.sample.id)
-            add_scoring_stats(scorer_name, True)
-
-            target_path.parent.mkdir(parents=True, exist_ok=True)
-            target_path.write_text(sample_with_score.model_dump_json())
+                target_path.parent.mkdir(parents=True, exist_ok=True)
+                target_path.write_text(sample_with_score.model_dump_json())
         except Exception:
             add_scoring_stats(scorer_name, False)
             logger.exception(f"Error while scoring {id_sample} from model {model_name}")
