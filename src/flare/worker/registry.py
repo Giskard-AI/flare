@@ -17,6 +17,9 @@ _queues_generator: dict[str, asyncio.Queue[Sample]] = {}
 _workers_generator: dict[str, list[asyncio.Task]] = {}
 
 DEFAULT_SCORER_QUEUE_MAXSIZE = int(os.getenv("DEFAULT_SCORER_QUEUE_MAXSIZE", "100"))
+DEFAULT_GENERATOR_QUEUE_MAXSIZE = int(
+    os.getenv("DEFAULT_GENERATOR_QUEUE_MAXSIZE", "100")
+)
 
 
 def register_scorer(
@@ -40,10 +43,10 @@ def register_scorer(
 
 def register_generator(run_name: str, config: ModelConfig):
     # We create a shared queue with all the workers for a same model
-    queue = asyncio.Queue()
     model = config.litellm_model
     nb_try = config.nb_try
     parallelism = config.parallelism
+    queue = asyncio.Queue(maxsize=DEFAULT_GENERATOR_QUEUE_MAXSIZE * parallelism)
     _queues_generator[model] = queue
     logger.info(
         "Starting generator on model %s with concurrency %s", model, parallelism
@@ -54,9 +57,9 @@ def register_generator(run_name: str, config: ModelConfig):
     ]
 
 
-def submit_sample(sample: Sample):
+async def submit_sample(sample: Sample):
     for queue in _queues_generator.values():
-        queue.put_nowait(deepcopy(sample))
+        await queue.put(deepcopy(sample))
 
 
 async def submit_to_scorer(sample_with_outputs: SampleWithOutputs):

@@ -91,7 +91,7 @@ async def main(
 
     # Push the sample in queues for generation
     for sample in samples:
-        submit_sample(sample)
+        await submit_sample(sample)
 
     with live_dashboard():
         while (
