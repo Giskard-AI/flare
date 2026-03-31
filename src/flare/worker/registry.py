@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 from copy import deepcopy
 
 from flare.generate.task import task_generate
@@ -15,14 +16,19 @@ _workers_scorer: dict[str, list[asyncio.Task]] = {}
 _queues_generator: dict[str, asyncio.Queue[Sample]] = {}
 _workers_generator: dict[str, list[asyncio.Task]] = {}
 
+DEFAULT_SCORER_QUEUE_MAXSIZE = int(os.getenv("DEFAULT_SCORER_QUEUE_MAXSIZE", "100"))
+DEFAULT_GENERATOR_QUEUE_MAXSIZE = int(
+    os.getenv("DEFAULT_GENERATOR_QUEUE_MAXSIZE", "100")
+)
+
 
 def register_scorer(
     run_name: str, scorer_name: str, conf: ScorerConfig, generators: list[ModelConfig]
 ):
     # Create the scored tasks
     # We create a shared queue with all the workers for a same scorer
-    queue = asyncio.Queue()
     parallelism = conf.parallelism
+    queue = asyncio.Queue(maxsize=DEFAULT_SCORER_QUEUE_MAXSIZE * parallelism)
     scorer_instance = get_scorer(scorer_name, conf.models, generators=generators)
     _queues_scorer[scorer_name] = queue
     _workers_scorer[scorer_name] = []
@@ -37,10 +43,10 @@ def register_scorer(
 
 def register_generator(run_name: str, config: ModelConfig):
     # We create a shared queue with all the workers for a same model
-    queue = asyncio.Queue()
     model = config.litellm_model
     nb_try = config.nb_try
     parallelism = config.parallelism
+    queue = asyncio.Queue(maxsize=DEFAULT_GENERATOR_QUEUE_MAXSIZE * parallelism)
     _queues_generator[model] = queue
     logger.info(
         "Starting generator on model %s with concurrency %s", model, parallelism
@@ -51,13 +57,13 @@ def register_generator(run_name: str, config: ModelConfig):
     ]
 
 
-def submit_sample(sample: Sample):
+async def submit_sample(sample: Sample):
     for queue in _queues_generator.values():
-        queue.put_nowait(deepcopy(sample))
+        await queue.put(deepcopy(sample))
 
 
-def submit_to_scorer(sample_with_outputs: SampleWithOutputs):
-    _queues_scorer[sample_with_outputs.sample.evaluation.scorer].put_nowait(
+async def submit_to_scorer(sample_with_outputs: SampleWithOutputs):
+    await _queues_scorer[sample_with_outputs.sample.evaluation.scorer].put(
         deepcopy(sample_with_outputs)
     )
 

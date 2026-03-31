@@ -27,7 +27,7 @@ async def task_generate(
 
             if result is not None:
                 add_generation_stats(model_name)
-                submit_to_scorer(result)
+                await submit_to_scorer(result)
             else:
                 add_generation_stats(model_name, False)
         except Exception:
