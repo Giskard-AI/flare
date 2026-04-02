@@ -25,6 +25,19 @@ from flare.worker.registry import (
 logger = logging.getLogger(__name__)
 
 
+class _DropLiteLLMLoggingWorkerQueueFull(logging.Filter):
+    def filter(self, record: logging.LogRecord) -> bool:
+        return "LoggingWorker queue is full" not in record.getMessage()
+
+
+def _suppress_litellm_logging_worker_queuefull() -> None:
+    flt = _DropLiteLLMLoggingWorkerQueueFull()
+    # LiteLLM uses these loggers (see litellm._logging).
+    logging.getLogger("LiteLLM").addFilter(flt)
+    logging.getLogger("LiteLLM Router").addFilter(flt)
+    logging.getLogger("LiteLLM Proxy").addFilter(flt)
+
+
 async def main(
     run_name: str,
     sample_path: str,
@@ -162,6 +175,7 @@ def main_cli():
         run_path.mkdir(parents=True, exist_ok=True)
 
     setup_log(run_path, level="DEBUG" if args.debug else "INFO")
+    _suppress_litellm_logging_worker_queuefull()
 
     if args.litellm_debug:
         import litellm
