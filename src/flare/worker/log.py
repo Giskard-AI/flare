@@ -5,6 +5,26 @@ from pathlib import Path
 
 LOG_FILE = "run.log"
 
+_LITELLM_LOGGER_NAMES = ("LiteLLM", "LiteLLM Router", "LiteLLM Proxy")
+
+
+def _suppress_litellm_stream_handlers() -> None:
+    """Remove LiteLLM's stderr StreamHandlers so logs only propagate to root (e.g. run.log).
+
+    LiteLLM registers its own StreamHandler on these loggers (see litellm._logging); that
+    duplicates file output and breaks Rich Live full-screen dashboards.
+    """
+    try:
+        import litellm._logging  # noqa: F401 — registers StreamHandlers on import
+    except ImportError:
+        return
+
+    for name in _LITELLM_LOGGER_NAMES:
+        lg = logging.getLogger(name)
+        for h in list(lg.handlers):
+            if isinstance(h, logging.StreamHandler):
+                lg.removeHandler(h)
+
 
 def setup_log(log_path: Path, level: str = "INFO"):
     # Initialisation of the logs, by making httpx a bit more silent
@@ -29,3 +49,4 @@ def setup_log(log_path: Path, level: str = "INFO"):
         datefmt="%Y-%m-%d %H:%M:%S",
         force=True,
     )
+    _suppress_litellm_stream_handlers()
