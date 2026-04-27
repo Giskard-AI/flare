@@ -22,7 +22,7 @@ dependencies = [
 dev = [
     "black==26.3.1",
     "ipykernel>=6.30.1",
-    "isort==6.0.1",
+    "isort==6.1.0",
 ]
 
 [tool.isort]
