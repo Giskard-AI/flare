@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13, <3.14"
 dependencies = [
     "boto3==1.43.0",
-    "litellm>=1.80.0",
+    "litellm==1.83.0",
     "numpy==2.3.2",
     "openai>=1.97.1,<2",
     "pandas==2.3.3",
