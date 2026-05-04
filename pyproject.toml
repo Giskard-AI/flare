@@ -7,7 +7,7 @@ requires-python = ">=3.13, <3.14"
 dependencies = [
     "boto3==1.40.49",
     "litellm>=1.80.0",
-    "numpy==2.3.2",
+    "numpy==2.4.4",
     "openai>=1.97.1,<2",
     "pandas==2.3.1",
     "pydantic>=2.11.7",
