@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13, <3.14"
 dependencies = [
-    "boto3==1.40.49",
+    "boto3==1.43.3",
     "litellm>=1.80.0",
     "numpy==2.3.2",
     "openai>=1.97.1,<2",
