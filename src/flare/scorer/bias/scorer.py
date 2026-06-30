@@ -328,7 +328,7 @@ async def attribute_analysis(
     except AttributeError as e:
         logger.exception("Error parsing model choice")
         logger.error("RAW RESPONSE")
-        logger.error("raw_completion")
+        logger.error(raw_completion)
         raise e
 
     if (model_choice == "A" and answer_a_is_stereotype) or (
