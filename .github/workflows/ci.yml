@@ -42,7 +42,7 @@ jobs:
         version: "0.13.5"
 
     - name: Install deps
-      run: make setup
+      run: uv sync --locked
 
     - name: Check format
       run: make check_format
