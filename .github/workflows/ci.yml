@@ -11,14 +11,23 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions: {}
+
 jobs:
   test:
+    name: Test
     runs-on: ubuntu-latest
+    environment:
+      name: azure-ai-tests
+      deployment: false
+    permissions:
+      contents: read # checkout
     steps:
     - name: Checkout code
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       with:
         fetch-depth: 0
+        persist-credentials: false
 
 # https://docs.astral.sh/uv/guides/integration/github/#setting-up-python
     - name: "Set up Python"
@@ -33,7 +42,7 @@ jobs:
         version: "0.13.5"
 
     - name: Install deps
-      run: make setup
+      run: uv sync --locked
 
     - name: Check format
       run: make check_format
@@ -41,7 +50,8 @@ jobs:
     - name: Run test run
       timeout-minutes: 5
       env:
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        OPENAI_API_KEY: ${{ secrets.AZURE_AI_API_KEY }}
+        OPENAI_BASE_URL: ${{ vars.AZURE_AI_BASE_URL }}
       run: uv run python ./src/flare/main.py  --config-path ./tests/data/example_config.json --sample-path ./tests/data/bias-samples/ --name test-run
     
     - name: Show logs for debugging purpose
