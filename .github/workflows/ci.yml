@@ -11,14 +11,23 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions: {}
+
 jobs:
   test:
+    name: Test
     runs-on: ubuntu-latest
+    environment:
+      name: openai-tests
+      deployment: false
+    permissions:
+      contents: read # checkout
     steps:
     - name: Checkout code
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       with:
         fetch-depth: 0
+        persist-credentials: false
 
 # https://docs.astral.sh/uv/guides/integration/github/#setting-up-python
     - name: "Set up Python"
